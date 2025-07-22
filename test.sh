@@ -4,23 +4,29 @@
 echo "🔧 Compiling..."
 g++ -std=c++17 -o codebound main.cpp Character.cpp Player.cpp Enemy.cpp
 
-# 🎮 Run simulated game (starts new game, fights once, saves, exits)
+# ✅ Make sure previous output is cleared
+rm -f test_output.txt
+
+# 🎮 Simulated first run (new game, short fight, save)
 echo "🎮 Running game simulation..."
-./codebound << EOF > test_output.txt
-1               # New Game
-TestPlayerBot   # Enter hero name
-1               # Attack
-1               # Attack
-1               # Attack
-1               # Attack
-n               # No rematch
+./codebound > test_output.txt << EOF
+1
+TestPlayerBot
+1
+1
+1
+1
+n
 EOF
 
-# 💾 Run again to test loading
+# 🔁 Test loading saved game (should skip battle)
 echo "🔁 Loading saved game..."
-./codebound << EOF >> test_output.txt
-2               # Load Game
-n               # Exit immediately
+./codebound >> test_output.txt << EOF
+2
+1
+1
+1
+n
 EOF
 
 # 🧪 Check test output
@@ -43,4 +49,4 @@ else
     echo "❌ Save File Loaded: FAIL"
 fi
 
-echo "📄 Full output saved to test_output.txt"
+echo "📄 Output saved to test_output.txt (size: $(du -h test_output.txt | cut -f1))"
