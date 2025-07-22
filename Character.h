@@ -13,6 +13,7 @@ protected:
     int atk, def;
 
 public:
+    string getName() const { return name; }
     Character(string name, int level, int hp, int atk, int def);
     virtual void attack(Character& target) = 0;
     void takeDamage(int dmg);
