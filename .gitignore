@@ -1,0 +1,8 @@
+# Ignore compiled files
+*.o
+*.out
+*.exe
+codebound
+
+# Ignore save files
+save.txt
