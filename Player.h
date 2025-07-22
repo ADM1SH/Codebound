@@ -15,6 +15,7 @@ private:
     vector<string> inventory;
 
 public:
+    int getLevel() const { return level; }
     Player(string name);
     void attack(Character& target) override;
     void levelUp();
