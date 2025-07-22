@@ -1,4 +1,5 @@
 // Player.cpp
+#include <fstream>
 #include "Player.h"
 #include <iostream>
 #include <cstdlib>
@@ -37,4 +38,56 @@ void Player::addXP(int amount) {
         xp -= level * 100;
         levelUp();
     }
+}
+
+void Player::saveToFile(const string& filename) {
+    ofstream file(filename);
+    if (!file.is_open()) {
+        cout << "❌ Failed to save game.\n";
+        return;
+    }
+
+    file << name << "\n"
+         << level << "\n"
+         << hp << "\n"
+         << maxHp << "\n"
+         << xp << "\n"
+         << atk << "\n"
+         << def << "\n"
+         << gold << "\n";
+
+    // Save inventory
+    file << inventory.size() << "\n";
+    for (const auto& item : inventory) {
+        file << item << "\n";
+    }
+
+    file.close();
+    cout << "💾 Game saved successfully!\n";
+}
+
+bool Player::loadFromFile(const string& filename) {
+    ifstream file(filename);
+    if (!file.is_open()) {
+        cout << "❌ No saved game found.\n";
+        return false;
+    }
+
+    int invSize;
+    file >> ws;
+    getline(file, name);
+    file >> level >> hp >> maxHp >> xp >> atk >> def >> gold;
+    file >> invSize;
+    file.ignore();
+
+    inventory.clear();
+    for (int i = 0; i < invSize; i++) {
+        string item;
+        getline(file, item);
+        inventory.push_back(item);
+    }
+
+    file.close();
+    cout << "✅ Game loaded successfully!\n";
+    return true;
 }
