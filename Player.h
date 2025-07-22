@@ -15,6 +15,8 @@ private:
     vector<string> inventory;
 
 public:
+    void saveToFile(const string& filename);
+    bool loadFromFile(const string& filename);
     void addXP(int amount);
     int getXP() const { return xp; }
     int getLevel() const { return level; }
