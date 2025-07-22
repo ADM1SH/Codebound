@@ -10,14 +10,23 @@ using namespace std;
 int main() {
     srand(time(0)); // Seed RNG
 
-    cout << "Welcome to Codebound!\n";
-    cout << "Enter your hero's name: ";
-    string playerName;
-    getline(cin, playerName);
+    Player player("Unnamed");
 
-    Player player(playerName);
-    cout << "\n--- Your Stats ---\n";
-    player.displayStats();
+    cout << "Welcome to Codebound!\n";
+    cout << "1. New Game\n2. Load Game\nChoose: ";
+    int choice;
+    cin >> choice;
+    cin.ignore(); // flush newline
+
+    if (choice == 2 && player.loadFromFile("save.txt")) {
+        cout << "\n--- Your Stats ---\n";
+        player.displayStats();
+    } else {
+        cout << "Enter your hero's name: ";
+        string name;
+        getline(cin, name);
+        player = Player(name);
+    }
 
     bool playing = true;
 
@@ -51,6 +60,7 @@ int main() {
             cout << "\nYou defeated the " << enemy.getName() << "!\n";
             int earnedXP = enemy.getLevel() * 50;
             player.addXP(earnedXP);
+            player.saveToFile("save.txt");
         } else {
             cout << "\nYou were defeated by the " << enemy.getName() << "...\n";
             playing = false;
