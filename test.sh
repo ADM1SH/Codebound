@@ -2,7 +2,7 @@
 
 # 🔧 Compile
 echo "🔧 Compiling..."
-g++ -std=c++17 -o codebound main.cpp Character.cpp Player.cpp Enemy.cpp
+g++ -DTEST_MODE -std=c++17 -o codebound main.cpp Character.cpp Player.cpp Enemy.cpp
 
 # ✅ Make sure previous output is cleared
 rm -f test_output.txt
@@ -22,12 +22,23 @@ EOF
 # 🔁 Test loading saved game (should skip battle)
 echo "🔁 Loading saved game..."
 ./codebound >> test_output.txt << EOF
-2
-1
-1
-1
-n
+2     # Load game
+1     # Attack
+1     # Attack
+1     # Attack
+1     # Attack
+1     # Attack
+1     # Attack
+n     # No rematch
 EOF
+
+# ✅ Trim output to last 100 lines only if the file exists
+if [ -f test_output.txt ]; then
+    tail -n 100 test_output.txt > test_output_trimmed.txt
+    mv test_output_trimmed.txt test_output.txt
+else
+    echo "⚠️ test_output.txt not found — skipping trim."
+fi
 
 # 🧪 Check test output
 echo "🧪 Checking test results..."

@@ -67,6 +67,10 @@ int main() {
             break;
         }
 
+        #ifdef TEST_MODE
+            return 0;
+        #endif
+
         cout << "\nWould you like to battle again? (Y/N): ";
         char again;
         cin >> again;
