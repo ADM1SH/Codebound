@@ -6,3 +6,6 @@ codebound
 
 # Ignore save files
 save.txt
+
+# Ignore test output
+test_output.txt
