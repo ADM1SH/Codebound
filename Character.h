@@ -3,16 +3,17 @@
 #define CHARACTER_H
 
 #include <string>
+using namespace std;
 
 class Character {
 protected:
-    std::string name;
+    string name;
     int level;
     int hp, maxHp;
     int atk, def;
 
 public:
-    Character(std::string name, int level, int hp, int atk, int def);
+    Character(string name, int level, int hp, int atk, int def);
     virtual void attack(Character& target) = 0;
     void takeDamage(int dmg);
     bool isAlive() const;
