@@ -27,3 +27,14 @@ void Player::displayStats() const {
     Character::displayStats();
     cout << "XP: " << xp << " | Gold: " << gold << "\n";
 }
+
+void Player::addXP(int amount) {
+    xp += amount;
+    cout << name << " gained " << amount << " XP!\n";
+
+    // XP needed to level up = level * 100
+    if (xp >= level * 100) {
+        xp -= level * 100;
+        levelUp();
+    }
+}
