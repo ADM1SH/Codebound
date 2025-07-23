@@ -12,6 +12,7 @@ class Player : public Character {
 private:
     int xp;
     int gold;
+    int mp;  // Mana points for magic-related items
     vector<string> inventory;
 
 public:
@@ -23,7 +24,9 @@ public:
     void addXP(int amount);
     int getXP() const { return xp; }
     int getLevel() const { return level; }
-    Player(string name);
+    int getMP() const { return mp; }
+    void setMP(int amount) { mp = amount; }
+    Player(string name); // now initializes mp too
     void attack(Character& target) override;
     void levelUp();
     void displayStats() const override; // Displays full stats including inventory

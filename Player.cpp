@@ -8,7 +8,7 @@
 using namespace std;
 
 Player::Player(string name)
-    : Character(name, 1, 100, 15, 5), xp(0), gold(0) {
+    : Character(name, 1, 100, 15, 5), xp(0), gold(0), mp(50) {
     inventory.push_back("Potion");
     inventory.push_back("Potion");
 }
@@ -30,15 +30,7 @@ void Player::levelUp() {
 
 void Player::displayStats() const {
     Character::displayStats();
-    cout << "XP: " << xp << " | Gold: " << gold << "\n";
-    cout << "Inventory: ";
-    if (inventory.empty()) {
-        cout << "(empty)";
-    } else {
-        for (const auto& item : inventory) {
-            cout << item << " ";
-        }
-    }
+    cout << "XP: " << xp << " | Gold: " << gold << " | MP: " << mp;
     cout << "\n";
 }
 
@@ -97,7 +89,8 @@ void Player::saveToFile(const string& filename) {
          << xp << "\n"
          << atk << "\n"
          << def << "\n"
-         << gold << "\n";
+         << gold << "\n"
+         << mp << "\n";
 
     // Save inventory
     file << inventory.size() << "\n";
@@ -119,7 +112,7 @@ bool Player::loadFromFile(const string& filename) {
     int invSize;
     file >> ws;
     getline(file, name);
-    file >> level >> hp >> maxHp >> xp >> atk >> def >> gold;
+    file >> level >> hp >> maxHp >> xp >> atk >> def >> gold >> mp;
     file >> invSize;
     file.ignore();
 
@@ -136,4 +129,11 @@ bool Player::loadFromFile(const string& filename) {
 }
 const vector<string>& Player::getInventory() const {
     return inventory;
+}
+int Player::getMP() const {
+    return mp;
+}
+
+void Player::setMP(int amount) {
+    mp = amount;
 }
