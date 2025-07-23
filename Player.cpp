@@ -30,8 +30,16 @@ void Player::levelUp() {
 
 void Player::displayStats() const {
     Character::displayStats();
-    cout << "XP: " << xp << " | Gold: " << gold << " | MP: " << mp;
-    cout << "\n";
+    cout << "XP: " << xp << " | Gold: " << gold << " | MP: " << mp << "\n";
+
+    // Show HP bar
+    int barWidth = 20;
+    int filled = (hp * barWidth) / maxHp;
+    cout << "HP: [";
+    for (int i = 0; i < barWidth; ++i) {
+        cout << (i < filled ? "#" : "-");
+    }
+    cout << "] " << hp << "/" << maxHp << "\n";
 }
 
 void Player::addXP(int amount) {
@@ -56,23 +64,33 @@ std::vector<std::string>& Player::getInventory() {
 
 void Player::useItem(const string& item) {
     auto it = find(inventory.begin(), inventory.end(), item);
-    if (it != inventory.end()) {
-        if (item == "Potion") {
-            int heal = 30;
-            hp = min(hp + heal, maxHp);
-            cout << name << " used a Potion and restored " << heal << " HP!\n";
-        } else if (item == "Elixir") {
-            int heal = 100;
-            hp = min(hp + heal, maxHp);
-            cout << name << " used an Elixir and fully restored HP!\n";
-        } else {
-            cout << "⚠️ Unknown item.\n";
-            return;
-        }
-        inventory.erase(it);
-    } else {
+    if (it == inventory.end()) {
         cout << "❌ No " << item << " in inventory.\n";
+        return;
     }
+
+    if (item == "Potion") {
+        int heal = 30;
+        hp = min(hp + heal, maxHp);
+        cout << name << " used a Potion and restored " << heal << " HP!\n";
+    } else if (item == "Elixir") {
+        hp = maxHp;
+        cout << name << " used an Elixir and fully restored HP!\n";
+    } else if (item == "Bomb") {
+        cout << name << " threw a Bomb! (💥 Enemy takes 50 damage — apply manually in main)\n";
+    } else if (item == "Shield") {
+        def += 5;
+        cout << name << " used a Shield! Defense increased by 5 this battle.\n";
+    } else if (item == "Mana Potion") {
+        int restore = 30;
+        mp += restore;
+        cout << name << " drank a Mana Potion! MP restored by " << restore << ".\n";
+    } else {
+        cout << "⚠️ Unknown item.\n";
+        return;
+    }
+
+    inventory.erase(it);  // remove used item
 }
 
 void Player::saveToFile(const string& filename) {
@@ -127,13 +145,18 @@ bool Player::loadFromFile(const string& filename) {
     cout << "✅ Game loaded successfully!\n";
     return true;
 }
-const vector<string>& Player::getInventory() const {
-    return inventory;
-}
-int Player::getMP() const {
-    return mp;
+
+void Player::displayInventoryWithIndex() const {
+    cout << "Inventory:\n";
+    for (size_t i = 0; i < inventory.size(); ++i) {
+        cout << i + 1 << ". " << inventory[i] << "\n";
+    }
 }
 
-void Player::setMP(int amount) {
-    mp = amount;
+void Player::useItemByIndex(int index) {
+    if (index < 1 || index > static_cast<int>(inventory.size())) {
+        cout << "❌ Invalid item selection.\n";
+        return;
+    }
+    useItem(inventory[index - 1]);
 }

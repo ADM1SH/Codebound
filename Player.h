@@ -32,6 +32,12 @@ public:
     void displayStats() const override; // Displays full stats including inventory
     void useItem(const std::string& item);
     void addItem(const string& item);
+
+    // Shows inventory with numbered list
+    void displayInventoryWithIndex() const;
+
+    // Uses item by choosing its index in inventory
+    void useItemByIndex(int index);
 };
 
 #endif
