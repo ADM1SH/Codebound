@@ -78,80 +78,81 @@ int main() {
 
     bool playing = true;
     while (playing) {
-        Enemy enemy = Enemy::generateRandomEnemy(player.getLevel());
+        const int waveSize = 3;
+        std::vector<Enemy> enemyWave;
+        for (int i = 0; i < waveSize; ++i) {
+            enemyWave.push_back(Enemy::generateRandomEnemy(player.getLevel()));
+        }
 
-        cout << "\n--- Enemy Appears! ---\n";
-        enemy.displayStats();
-        cout << "\n=== BATTLE START ===\n";
+        for (size_t i = 0; i < enemyWave.size(); ++i) {
+            Enemy& enemy = enemyWave[i];
 
-        while (player.isAlive() && enemy.isAlive()) {
-            cout << "\nYour Turn:\n";
-            cout << "1. Attack\n2. View Stats\n3. Use Item\nChoose: ";
-            int choice;
-            cin >> choice;
-            cin.ignore();
+            cout << "\n🌊 Wave " << (i + 1) << " of " << waveSize << endl;
+            cout << "\n--- Enemy Appears! ---\n";
+            enemy.displayStats();
+            cout << "\n=== BATTLE START ===\n";
 
-            if (choice == 1) {
-                player.attack(enemy);
-            } else if (choice == 2) {
-                player.displayStats();
-                continue;
-            } else if (choice == 3) {
-                const auto& inv = player.getInventory();
-                if (inv.empty()) {
-                    cout << "Your inventory is empty!\n";
-                    continue;
-                }
-
-                cout << "\nInventory:\n";
-                for (size_t i = 0; i < inv.size(); ++i) {
-                    cout << i + 1 << ". " << inv[i] << "\n";
-                }
-
-                cout << "Choose item number (or 0 to cancel): ";
-                int index;
-                cin >> index;
+            while (player.isAlive() && enemy.isAlive()) {
+                cout << "\nYour Turn:\n";
+                cout << "1. Attack\n2. View Stats\n3. Use Item\nChoose: ";
+                int choice;
+                cin >> choice;
                 cin.ignore();
 
-                if (index == 0) {
-                    cout << "Cancelled item use.\n";
+                if (choice == 1) {
+                    player.attack(enemy);
+                } else if (choice == 2) {
+                    player.displayStats();
                     continue;
-                } else if (index > 0 && static_cast<size_t>(index) <= inv.size()) {
-                    player.useItemByIndex(index - 1);
+                } else if (choice == 3) {
+                    player.displayInventoryWithIndex();
+                    cout << "Choose item number (or 0 to cancel): ";
+                    int index;
+                    cin >> index;
+                    cin.ignore();
+
+                    if (index == 0) {
+                        cout << "Cancelled item use.\n";
+                        continue;
+                    } else if (index > 0 && static_cast<size_t>(index) <= player.getInventory().size()) {
+                        player.useItemByIndex(index - 1);
+                    } else {
+                        cout << "Invalid item number.\n";
+                    }
+                    continue;
                 } else {
-                    cout << "Invalid item number.\n";
+                    cout << "Invalid choice.\n";
+                    continue;
                 }
-                continue;
-            } else {
-                cout << "Invalid choice.\n";
-                continue;
+
+                if (enemy.isAlive()) {
+                    cout << "\nEnemy's Turn:\n";
+                    enemy.attack(player);
+                }
             }
 
-            if (enemy.isAlive()) {
-                cout << "\nEnemy's Turn:\n";
-                enemy.attack(player);
+            if (!player.isAlive()) {
+                cout << "\nYou were defeated by the " << enemy.getName() << "...\n";
+                playing = false;
+                break;
+            } else {
+                cout << "\nYou defeated the " << enemy.getName() << "!\n";
+                int earnedXP = enemy.getLevel() * 50;
+                player.addXP(earnedXP);
             }
         }
 
         if (player.isAlive()) {
-            cout << "\nYou defeated the " << enemy.getName() << "!\n";
-            int earnedXP = enemy.getLevel() * 50;
-            player.addXP(earnedXP);
+            cout << "🏆 You cleared all enemy waves!\n";
+            player.addGold(100);  // bonus gold
+            player.addXP(100);    // bonus XP
             player.saveToFile("save.txt");
             Leaderboard lb;
             lb.loadFromFile("leaderboard.json");
             lb.addOrUpdateEntry(player.getName(), player.getLevel(), player.getXP());
             lb.sortLeaderboard();
             lb.saveToFile("leaderboard.json");
-        } else {
-            cout << "\nYou were defeated by the " << enemy.getName() << "...\n";
-            playing = false;
-            break;
         }
-
-        #ifdef TEST_MODE
-            return 0;
-        #endif
 
         cout << "\nWould you like to battle again? (Y/N): ";
         char again;

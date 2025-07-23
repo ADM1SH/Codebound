@@ -160,3 +160,8 @@ void Player::useItemByIndex(int index) {
     }
     useItem(inventory[index - 1]);
 }
+
+void Player::addGold(int amount) {
+    gold += amount;
+    cout << "You earned " << amount << " gold! Total gold: " << gold << "\n";
+}

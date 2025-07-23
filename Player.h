@@ -17,6 +17,7 @@ private:
 
 public:
 // Player.h
+    void addGold(int amount);
     std::vector<std::string>& getInventory();              // for push_back
     const std::vector<std::string>& getInventory() const;  // for display/read-only    
     void saveToFile(const string& filename);
