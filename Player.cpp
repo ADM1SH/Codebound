@@ -1,5 +1,6 @@
 // Player.cpp
 #include <fstream>
+#include <algorithm>
 #include "Player.h"
 #include <iostream>
 #include <cstdlib>
@@ -7,7 +8,10 @@
 using namespace std;
 
 Player::Player(string name)
-    : Character(name, 1, 100, 15, 5), xp(0), gold(0) {}
+    : Character(name, 1, 100, 15, 5), xp(0), gold(0) {
+    inventory.push_back("Potion");
+    inventory.push_back("Potion");
+}
 
 void Player::attack(Character& target) {
     int dmg = rand() % 10 + atk;
@@ -27,6 +31,15 @@ void Player::levelUp() {
 void Player::displayStats() const {
     Character::displayStats();
     cout << "XP: " << xp << " | Gold: " << gold << "\n";
+    cout << "Inventory: ";
+    if (inventory.empty()) {
+        cout << "(empty)";
+    } else {
+        for (const auto& item : inventory) {
+            cout << item << " ";
+        }
+    }
+    cout << "\n";
 }
 
 void Player::addXP(int amount) {
@@ -37,6 +50,36 @@ void Player::addXP(int amount) {
     if (xp >= level * 100) {
         xp -= level * 100;
         levelUp();
+    }
+}
+
+void Player::addItem(const string& item) {
+    inventory.push_back(item);
+    cout << item << " added to inventory.\n";
+}
+
+std::vector<std::string>& Player::getInventory() {
+    return inventory;
+}
+
+void Player::useItem(const string& item) {
+    auto it = find(inventory.begin(), inventory.end(), item);
+    if (it != inventory.end()) {
+        if (item == "Potion") {
+            int heal = 30;
+            hp = min(hp + heal, maxHp);
+            cout << name << " used a Potion and restored " << heal << " HP!\n";
+        } else if (item == "Elixir") {
+            int heal = 100;
+            hp = min(hp + heal, maxHp);
+            cout << name << " used an Elixir and fully restored HP!\n";
+        } else {
+            cout << "⚠️ Unknown item.\n";
+            return;
+        }
+        inventory.erase(it);
+    } else {
+        cout << "❌ No " << item << " in inventory.\n";
     }
 }
 
@@ -90,4 +133,7 @@ bool Player::loadFromFile(const string& filename) {
     file.close();
     cout << "✅ Game loaded successfully!\n";
     return true;
+}
+const vector<string>& Player::getInventory() const {
+    return inventory;
 }

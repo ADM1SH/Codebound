@@ -26,6 +26,8 @@ int main() {
         string name;
         getline(cin, name);
         player = Player(name);
+        player.getInventory().push_back("Potion");
+        player.getInventory().push_back("Elixir");
     }
 
     #ifdef TEST_MODE
@@ -34,19 +36,11 @@ int main() {
         cout << "\n--- Enemy Appears! ---\n";
         enemy.displayStats();
         cout << "\n=== BATTLE START ===\n";
+        player.useItem("Potion");
 
-        while (player.isAlive() && enemy.isAlive()) {
+        for (int turn = 1; turn <= 2 && player.isAlive() && enemy.isAlive(); ++turn) {
             cout << "\nYour Turn:\n";
-            cout << "1. Attack\n2. View Stats\nChoose: ";
-            int choice;
-            cin >> choice;
-
-            if (choice == 1) {
-                player.attack(enemy);
-            } else {
-                player.displayStats();
-                continue;
-            }
+            player.attack(enemy);
 
             if (enemy.isAlive()) {
                 cout << "\nEnemy's Turn:\n";
@@ -78,14 +72,24 @@ int main() {
 
         while (player.isAlive() && enemy.isAlive()) {
             cout << "\nYour Turn:\n";
-            cout << "1. Attack\n2. View Stats\nChoose: ";
+            cout << "1. Attack\n2. View Stats\n3. Use Item\nChoose: ";
             int choice;
             cin >> choice;
+            cin.ignore();
 
             if (choice == 1) {
                 player.attack(enemy);
-            } else {
+            } else if (choice == 2) {
                 player.displayStats();
+                continue;
+            } else if (choice == 3) {
+                string item;
+                cout << "Enter item to use: ";
+                getline(cin, item);
+                player.useItem(item);
+                continue;
+            } else {
+                cout << "Invalid choice.\n";
                 continue;
             }
 

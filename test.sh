@@ -7,13 +7,12 @@ g++ -DTEST_MODE -std=c++17 -o codebound main.cpp Character.cpp Player.cpp Enemy.
 # ✅ Make sure previous output is cleared
 rm -f test_output.txt
 
-# 🎮 Simulated first run (new game, short fight, save)
+# 🎮 Simulated first run (new game, short fight, use item, save)
 echo "🎮 Running game simulation..."
 ./codebound > test_output.txt << EOF
 1
 TestPlayerBot
-1
-1
+3
 1
 1
 n
@@ -23,8 +22,8 @@ EOF
 echo "🔁 Loading saved game..."
 ./codebound >> test_output.txt << EOF
 2
-1
-1
+3
+Potion
 1
 1
 n
@@ -56,6 +55,12 @@ if grep -q "Game loaded successfully" test_output.txt; then
     echo "✅ Save File Loaded: PASS"
 else
     echo "❌ Save File Loaded: FAIL"
+fi
+
+if grep -q "used a Potion" test_output.txt; then
+    echo "✅ Item Used in Battle: PASS"
+else
+    echo "❌ Item Used in Battle: FAIL"
 fi
 
 echo "📄 Output saved to test_output.txt (size: $(du -h test_output.txt | cut -f1))"
