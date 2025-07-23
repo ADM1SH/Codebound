@@ -1,6 +1,7 @@
 // main.cpp
 #include "Player.h"
 #include "Enemy.h"
+#include "Leaderboard.h"
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
@@ -13,10 +14,18 @@ int main() {
     Player player("Unnamed");
 
     cout << "Welcome to Codebound!\n";
-    cout << "1. New Game\n2. Load Game\nChoose: ";
+    cout << "1. New Game\n2. Load Game\n3. View Leaderboard\nChoose: ";
     int choice;
     cin >> choice;
     cin.ignore(); // flush newline
+
+    if (choice == 3) {
+        Leaderboard lb;
+        lb.loadFromFile("leaderboard.json");
+        lb.sortLeaderboard();
+        lb.display();
+        return 0;
+    }
 
     if (choice == 2 && player.loadFromFile("save.txt")) {
         cout << "\n--- Your Stats ---\n";
@@ -53,6 +62,11 @@ int main() {
             int earnedXP = enemy.getLevel() * 50;
             player.addXP(earnedXP);
             player.saveToFile("save.txt");
+            Leaderboard lb;
+            lb.loadFromFile("leaderboard.json");
+            lb.addOrUpdateEntry(player.getName(), player.getLevel(), player.getXP());
+            lb.sortLeaderboard();
+            lb.saveToFile("leaderboard.json");
         } else {
             cout << "\nYou were defeated by the " << enemy.getName() << "...\n";
         }
@@ -124,6 +138,11 @@ int main() {
             int earnedXP = enemy.getLevel() * 50;
             player.addXP(earnedXP);
             player.saveToFile("save.txt");
+            Leaderboard lb;
+            lb.loadFromFile("leaderboard.json");
+            lb.addOrUpdateEntry(player.getName(), player.getLevel(), player.getXP());
+            lb.sortLeaderboard();
+            lb.saveToFile("leaderboard.json");
         } else {
             cout << "\nYou were defeated by the " << enemy.getName() << "...\n";
             playing = false;
