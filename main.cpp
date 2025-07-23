@@ -83,10 +83,30 @@ int main() {
                 player.displayStats();
                 continue;
             } else if (choice == 3) {
-                string item;
-                cout << "Enter item to use: ";
-                getline(cin, item);
-                player.useItem(item);
+                const auto& inv = player.getInventory();
+                if (inv.empty()) {
+                    cout << "Your inventory is empty!\n";
+                    continue;
+                }
+
+                cout << "\nInventory:\n";
+                for (size_t i = 0; i < inv.size(); ++i) {
+                    cout << i + 1 << ". " << inv[i] << "\n";
+                }
+
+                cout << "Choose item number (or 0 to cancel): ";
+                int index;
+                cin >> index;
+                cin.ignore();
+
+                if (index == 0) {
+                    cout << "Cancelled item use.\n";
+                    continue;
+                } else if (index > 0 && static_cast<size_t>(index) <= inv.size()) {
+                    player.useItemByIndex(index - 1);
+                } else {
+                    cout << "Invalid item number.\n";
+                }
                 continue;
             } else {
                 cout << "Invalid choice.\n";
