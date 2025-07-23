@@ -22,14 +22,12 @@ EOF
 # 🔁 Test loading saved game (should skip battle)
 echo "🔁 Loading saved game..."
 ./codebound >> test_output.txt << EOF
-2     # Load game
-1     # Attack
-1     # Attack
-1     # Attack
-1     # Attack
-1     # Attack
-1     # Attack
-n     # No rematch
+2
+1
+1
+1
+1
+n
 EOF
 
 # ✅ Trim output to last 100 lines only if the file exists
