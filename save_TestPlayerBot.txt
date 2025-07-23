@@ -1,0 +1,11 @@
+TestPlayerBot
+2
+117
+120
+100
+20
+7
+0
+50
+1
+Elixir

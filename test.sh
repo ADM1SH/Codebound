@@ -2,8 +2,7 @@
 
 # 🔧 Compile
 echo "🔧 Compiling..."
-g++ -DTEST_MODE -std=c++17 -o codebound main.cpp Character.cpp Player.cpp Enemy.cpp
-
+g++ -DTEST_MODE -std=c++17 -I./include -o codebound ./main.cpp ./Character.cpp ./Player.cpp ./Enemy.cpp ./Leaderboard.cpp
 # ✅ Make sure previous output is cleared
 rm -f test_output.txt
 
@@ -13,6 +12,7 @@ echo "🎮 Running game simulation..."
 1
 TestPlayerBot
 3
+1
 1
 1
 n
@@ -26,7 +26,21 @@ echo "🔁 Loading saved game..."
 Potion
 1
 1
+1
 n
+EOF
+
+# 💾 Test alternate save slot (multi-save support)
+echo "💾 Testing alternate save slot..."
+./codebound >> test_output.txt << EOF
+1
+SlotTwoPlayer
+3
+1
+1
+1
+n
+3
 EOF
 
 # ✅ Trim output to last 100 lines only if the file exists
@@ -61,6 +75,12 @@ if grep -q "used a Potion" test_output.txt; then
     echo "✅ Item Used in Battle: PASS"
 else
     echo "❌ Item Used in Battle: FAIL"
+fi
+
+if grep -q "SlotTwoPlayer" test_output.txt; then
+    echo "✅ Alternate Save Slot: PASS"
+else
+    echo "❌ Alternate Save Slot: FAIL"
 fi
 
 echo "📄 Output saved to test_output.txt (size: $(du -h test_output.txt | cut -f1))"

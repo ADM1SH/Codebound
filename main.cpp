@@ -5,6 +5,8 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
+#include <filesystem>
+namespace fs = std::filesystem;
 
 using namespace std;
 
@@ -17,7 +19,7 @@ int main() {
     cout << "1. New Game\n2. Load Game\n3. View Leaderboard\nChoose: ";
     int choice;
     cin >> choice;
-    cin.ignore(); // flush newline
+    cin.ignore();
 
     if (choice == 3) {
         Leaderboard lb;
@@ -27,7 +29,42 @@ int main() {
         return 0;
     }
 
-    if (choice == 2 && player.loadFromFile("save.txt")) {
+    if (choice == 2) {
+        cout << "Available Save Slots:\n";
+        vector<string> saves;
+        for (const auto& entry : fs::directory_iterator(".")) {
+            std::string fname = entry.path().filename().string();
+            if (fname.rfind("save_", 0) == 0 && fname.size() > 4 && fname.substr(fname.size() - 4) == ".txt") {
+                saves.push_back(fname);
+            }
+        }
+
+        if (saves.empty()) {
+            cout << "No save files found.\n";
+            return 0;
+        }
+
+        for (size_t i = 0; i < saves.size(); ++i) {
+            cout << i + 1 << ". " << saves[i] << "\n";
+        }
+
+        cout << "Choose a save slot: ";
+        int slot;
+        cin >> slot;
+        cin.ignore();
+
+        if (slot < 1 || static_cast<size_t>(slot) > saves.size()) {
+            cout << "Invalid selection.\n";
+            return 0;
+        }
+
+        if (!player.loadFromFile(saves[slot - 1])) {
+            cout << "❌ Failed to load save file.\n";
+            return 0;
+        } else {
+            cout << "✅ Game loaded successfully!" << endl;
+        }
+
         cout << "\n--- Your Stats ---\n";
         player.displayStats();
     } else {
@@ -40,6 +77,11 @@ int main() {
     }
 
     #ifdef TEST_MODE
+        if (!player.loadFromFile("save_TestPlayerBot.txt")) {
+            cout << "❌ Failed to load test save file.\n";
+            return 1;
+        }
+
         Enemy enemy = Enemy::generateRandomEnemy(player.getLevel());
 
         cout << "\n--- Enemy Appears! ---\n";
@@ -61,7 +103,7 @@ int main() {
             cout << "\nYou defeated the " << enemy.getName() << "!\n";
             int earnedXP = enemy.getLevel() * 50;
             player.addXP(earnedXP);
-            player.saveToFile("save.txt");
+            player.saveToFile("save_" + player.getName() + ".txt");
             Leaderboard lb;
             lb.loadFromFile("leaderboard.json");
             lb.addOrUpdateEntry(player.getName(), player.getLevel(), player.getXP());
@@ -146,7 +188,7 @@ int main() {
             cout << "🏆 You cleared all enemy waves!\n";
             player.addGold(100);  // bonus gold
             player.addXP(100);    // bonus XP
-            player.saveToFile("save.txt");
+            player.saveToFile("save_" + player.getName() + ".txt");
             Leaderboard lb;
             lb.loadFromFile("leaderboard.json");
             lb.addOrUpdateEntry(player.getName(), player.getLevel(), player.getXP());

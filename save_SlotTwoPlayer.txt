@@ -1,0 +1,13 @@
+SlotTwoPlayer
+1
+88
+100
+50
+15
+5
+0
+50
+3
+Potion
+Potion
+Elixir

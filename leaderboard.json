@@ -3,5 +3,15 @@
         "level": 5,
         "name": "ADM1SH",
         "xp": 50
+    },
+    {
+        "level": 2,
+        "name": "TestPlayerBot",
+        "xp": 100
+    },
+    {
+        "level": 1,
+        "name": "SlotTwoPlayer",
+        "xp": 50
     }
 ]
