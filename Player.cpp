@@ -14,6 +14,11 @@ Player::Player(string name)
 }
 
 void Player::attack(Character& target) {
+    if (isStunned()) {
+        cout << name << " is stunned and cannot move this turn!\n";
+        stunned = false;
+        return;
+    }
     int dmg = rand() % 10 + atk;
     cout << name << " attacks for " << dmg << " damage!\n";
     target.takeDamage(dmg);
@@ -175,4 +180,12 @@ void Player::setStunned(bool value) {
 void Player::modifyTempAtk(int amount) {
     tempAtk += amount;
     if (tempAtk < 0) tempAtk = 0;
+}
+
+bool Player::isStunned() const {
+    return stunned;
+}
+
+void Player::resetTempAtk() {
+    tempAtk = 0;
 }

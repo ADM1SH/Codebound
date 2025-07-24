@@ -19,6 +19,8 @@ private:
 
 public:
 // Player.h
+    bool isStunned() const;
+    void resetTempAtk();
     void setStunned(bool value);
     void modifyTempAtk(int amount);
     void addGold(int amount);
