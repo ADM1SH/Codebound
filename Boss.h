@@ -10,6 +10,8 @@ private:
     bool specialUsed;
 
 public:
+    int getCurrentHP() const;
+    int getMaxHP() const;
     Boss()
         : Enemy("Undead King", 30, 1000, 150, 60), themePlayed(false), specialUsed(false) {}
 

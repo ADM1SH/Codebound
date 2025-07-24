@@ -220,7 +220,10 @@ int main(int argc, char* argv[]) {
         if (player.isAlive()) {
             cout << "\n💀 A powerful presence emerges... 💀\n";
             cout << "--- Boss Fight Begins! ---\n";
-            boss.displayStats();
+            cout << "👑 " << boss.getName() << " (Boss) - Level " << boss.getLevel() << "\n";
+            cout << "HP: [" << string(boss.getCurrentHP() * 20 / boss.getMaxHP(), '#') 
+                 << string(20 - boss.getCurrentHP() * 20 / boss.getMaxHP(), '-') << "] "
+                 << boss.getCurrentHP() << "/" << boss.getMaxHP() << "\n";
             cout << "\n=== FINAL BATTLE ===\n";
 
             while (player.isAlive() && boss.isAlive()) {
@@ -250,6 +253,9 @@ int main(int argc, char* argv[]) {
                         }
                     }
                     player.attack(boss);
+                    cout << "Boss HP: [" << string(boss.getCurrentHP() * 20 / boss.getMaxHP(), '#') 
+                         << string(20 - boss.getCurrentHP() * 20 / boss.getMaxHP(), '-') << "] "
+                         << boss.getCurrentHP() << "/" << boss.getMaxHP() << "\n";
                 }
                 else if (choice == 2) {
                     player.displayStats();  

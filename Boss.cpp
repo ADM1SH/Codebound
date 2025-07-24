@@ -24,3 +24,11 @@ void Boss::useSpecial(Character& target) {
 
     specialUsed = true;
 }
+
+int Boss::getCurrentHP() const {
+    return hp;
+}
+
+int Boss::getMaxHP() const {
+    return maxHp;
+}
