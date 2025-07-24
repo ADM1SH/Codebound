@@ -140,6 +140,15 @@ int main(int argc, char* argv[]) {
             cout << "\n=== BATTLE START ===\n";
 
             while (player.isAlive() && enemy.isAlive()) {
+                if (player.isStunned()) {
+                    cout << "⚡ You are stunned and lose this turn!" << endl;
+                    player.setStunned(false);
+                    if (enemy.isAlive()) {
+                        cout << "\nEnemy's Turn:\n";
+                        enemy.decideAndAct(player);
+                    }
+                    continue;
+                }
                 cout << "\nYour Turn:\n";
                 cout << "1. Attack\n2. View Stats\n3. Use Item\nChoose: ";
                 int choice;
