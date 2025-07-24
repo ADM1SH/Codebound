@@ -156,6 +156,15 @@ int main(int argc, char* argv[]) {
                 cin.ignore();
 
                 if (choice == 1) {
+                    // Decrease debuff duration each turn
+                    if (player.getAtkDebuffTurns() > 0) {
+                        cout << "🔻 ATK debuff active! " << player.getAtkDebuffTurns() << " turn(s) remaining.\n";
+                        player.decreaseAtkDebuffTurns();
+                        if (player.getAtkDebuffTurns() == 0) {
+                            player.resetTempAtk();
+                            cout << "🌀 Your strength has returned to normal.\n";
+                        }
+                    }
                     player.attack(enemy);
                 }
                 else if (choice == 2) {
@@ -190,6 +199,7 @@ int main(int argc, char* argv[]) {
                     cout << "\nEnemy's Turn:\n";
                     enemy.decideAndAct(player);
                 }
+                // No unconditional resetTempAtk; handled by debuff logic above.
             }
 
             if (!player.isAlive()) {

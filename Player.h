@@ -16,6 +16,7 @@ private:
     int gold;
     int mp;  // Mana points for magic-related items
     vector<string> inventory;
+    int atkDebuffTurns = 0;
 
 public:
 // Player.h
@@ -33,6 +34,9 @@ public:
     int getLevel() const { return level; }
     int getMP() const { return mp; }
     void setMP(int amount) { mp = amount; }
+    int getAtkDebuffTurns() const;
+    void decreaseAtkDebuffTurns();
+    void setAtkDebuffTurns(int turns);
     Player(string name); // now initializes mp too
     void attack(Character& target) override;
     void levelUp();

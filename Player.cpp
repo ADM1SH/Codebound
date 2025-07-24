@@ -8,7 +8,7 @@
 using namespace std;
 
 Player::Player(string name)
-    : Character(name, 1, 100, 15, 5), xp(0), gold(0), mp(50), stunned(false), tempAtk(0) {
+    : Character(name, 1, 100, 15, 5), xp(0), gold(0), mp(50), stunned(false), tempAtk(0), atkDebuffTurns(0) {
     inventory.push_back("Potion");
     inventory.push_back("Potion");
 }
@@ -188,4 +188,18 @@ bool Player::isStunned() const {
 
 void Player::resetTempAtk() {
     tempAtk = 0;
+}
+
+int Player::getAtkDebuffTurns() const {
+    return atkDebuffTurns;
+}
+
+void Player::decreaseAtkDebuffTurns() {
+    if (atkDebuffTurns > 0) {
+        atkDebuffTurns--;
+    }
+}
+
+void Player::setAtkDebuffTurns(int turns) {
+    atkDebuffTurns = turns;
 }
