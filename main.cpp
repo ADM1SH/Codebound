@@ -179,7 +179,7 @@ int main(int argc, char* argv[]) {
 
                 if (enemy.isAlive()) {
                     cout << "\nEnemy's Turn:\n";
-                    enemy.attack(player);
+                    enemy.decideAndAct(player);
                 }
             }
 

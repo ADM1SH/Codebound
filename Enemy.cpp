@@ -20,13 +20,7 @@ void Enemy::useSpecial(Character& target) {
 }
 
 void Enemy::attack(Character& target) {
-    if (!usedSpecial && (rand() % 3 == 0)) {
-        useSpecial(target);
-    } else {
-        int dmg = rand() % 8 + atk;
-        cout << type << " attacks you for " << dmg << " damage!\n";
-        target.takeDamage(dmg);
-    }
+    decideAndAct(target);
 }
 
 void Enemy::displayStats() const {
@@ -34,6 +28,27 @@ void Enemy::displayStats() const {
     cout << "HP: " << hp << "/" << maxHp
          << " | ATK: " << atk << " | DEF: " << def
          << " | Special: " << (usedSpecial ? "Used" : "Ready") << "\n";
+}
+
+void Enemy::decideAndAct(Character& target) {
+    // 20% chance to dodge player's attack (should be used in incoming logic elsewhere)
+
+    // Decide to use special attack if not yet used and 33% chance
+    if (!usedSpecial && rand() % 3 == 0) {
+        useSpecial(target);
+    } else {
+        int dmg = rand() % 8 + atk;
+        cout << type << " attacks you for " << dmg << " damage!\n";
+        target.takeDamage(dmg);
+    }
+
+    // 15% chance to heal after attacking
+    if (hp < maxHp && rand() % 100 < 15) {
+        int heal = 10 + rand() % 11; // Heal 10–20 HP
+        hp += heal;
+        if (hp > maxHp) hp = maxHp;
+        cout << type << " heals for " << heal << " HP!\n";
+    }
 }
 
 // Example enemy generator

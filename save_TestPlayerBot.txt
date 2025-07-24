@@ -1,6 +1,6 @@
 TestPlayerBot
 2
-112
+115
 120
 150
 20
