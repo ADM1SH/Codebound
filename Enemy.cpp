@@ -1,5 +1,6 @@
 #include "Enemy.h"
 #include "Character.h"
+#include "Player.h"
 #include <iostream>
 
 using namespace std;
@@ -53,14 +54,18 @@ void Enemy::useSpecial(Character& target) {
         int specialDmg = atk + 20 + rand() % 10;
         cout << type << " uses a furious strike for " << specialDmg << " damage and stuns you!\n";
         target.takeDamage(specialDmg);
-        // Optional: set a stunned flag on target here
+        if (Player* player = dynamic_cast<Player*>(&target)) {
+            player->setStunned(true);
+        }
     }
     else if (type == "Slime") {
         // Slime special: Slows target (reduce ATK temporarily if supported)
         int specialDmg = atk + 10 + rand() % 5;
         cout << type << " spits slime for " << specialDmg << " damage! Your attack power is reduced!\n";
         target.takeDamage(specialDmg);
-        // Optional: reduce target.atk here temporarily
+        if (Player* player = dynamic_cast<Player*>(&target)) {
+            player->modifyTempAtk(-10);
+        }
     }
     else if (type == "Skeleton") {
         // Skeleton special: Armor pierce (ignore DEF)

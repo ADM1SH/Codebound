@@ -8,7 +8,7 @@
 using namespace std;
 
 Player::Player(string name)
-    : Character(name, 1, 100, 15, 5), xp(0), gold(0), mp(50) {
+    : Character(name, 1, 100, 15, 5), xp(0), gold(0), mp(50), stunned(false), tempAtk(0) {
     inventory.push_back("Potion");
     inventory.push_back("Potion");
 }
@@ -166,4 +166,13 @@ void Player::useItemByIndex(int index, bool& success) {
 void Player::addGold(int amount) {
     gold += amount;
     cout << "You earned " << amount << " gold! Total gold: " << gold << "\n";
+}
+
+void Player::setStunned(bool value) {
+    stunned = value;
+}
+
+void Player::modifyTempAtk(int amount) {
+    tempAtk += amount;
+    if (tempAtk < 0) tempAtk = 0;
 }

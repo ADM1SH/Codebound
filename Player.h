@@ -10,6 +10,8 @@ using namespace std;
 
 class Player : public Character {
 private:
+    bool stunned;
+    int tempAtk;
     int xp;
     int gold;
     int mp;  // Mana points for magic-related items
@@ -17,6 +19,8 @@ private:
 
 public:
 // Player.h
+    void setStunned(bool value);
+    void modifyTempAtk(int amount);
     void addGold(int amount);
     std::vector<std::string>& getInventory();              // for push_back
     const std::vector<std::string>& getInventory() const;  // for display/read-only    
