@@ -1,6 +1,7 @@
 // main.cpp
 #include "Player.h"
 #include "Enemy.h"
+#include "Boss.h"
 #include "Leaderboard.h"
 #include <iostream>
 #include <cstdlib>
@@ -131,6 +132,9 @@ int main(int argc, char* argv[]) {
             enemyWave.push_back(Enemy::generateRandomEnemy(player.getLevel()));
         }
 
+        // Add Undead King boss fight after waves
+        Boss boss("Undead King", player.getLevel() + 5, 400, 60, 40); // Example stats
+
         for (size_t i = 0; i < enemyWave.size(); ++i) {
             Enemy& enemy = enemyWave[i];
 
@@ -210,6 +214,84 @@ int main(int argc, char* argv[]) {
                 cout << "\nYou defeated the " << enemy.getName() << "!\n";
                 int earnedXP = enemy.getLevel() * 50;
                 player.addXP(earnedXP);
+            }
+        }
+
+        if (player.isAlive()) {
+            cout << "\n💀 A powerful presence emerges... 💀\n";
+            cout << "--- Boss Fight Begins! ---\n";
+            boss.displayStats();
+            cout << "\n=== FINAL BATTLE ===\n";
+
+            while (player.isAlive() && boss.isAlive()) {
+                if (player.isStunned()) {
+                    cout << "⚡ You are stunned and lose this turn!" << endl;
+                    player.setStunned(false);
+                    if (boss.isAlive()) {
+                        cout << "\nBoss's Turn:\n";
+                        boss.decideAndAct(player);
+                    }
+                    continue;
+                }
+
+                cout << "\nYour Turn:\n";
+                cout << "1. Attack\n2. View Stats\n3. Use Item\nChoose: ";
+                int choice;
+                cin >> choice;
+                cin.ignore();
+
+                if (choice == 1) {
+                    if (player.getAtkDebuffTurns() > 0) {
+                        cout << "🔻 ATK debuff active! " << player.getAtkDebuffTurns() << " turn(s) remaining.\n";
+                        player.decreaseAtkDebuffTurns();
+                        if (player.getAtkDebuffTurns() == 0) {
+                            player.resetTempAtk();
+                            cout << "🌀 Your strength has returned to normal.\n";
+                        }
+                    }
+                    player.attack(boss);
+                }
+                else if (choice == 2) {
+                    player.displayStats();  
+                    continue;
+                }
+                else if (choice == 3) {
+                    player.displayInventoryWithIndex();
+                    cout << "Choose item number (or 0 to cancel): ";
+                    int index;
+                    cin >> index;
+                    cin.ignore();
+
+                    if (index == 0) {
+                        cout << "Cancelled item use.\n";
+                        continue;
+                    }
+                    bool success = false;
+                    player.useItemByIndex(index - 1, success);
+                    if (!success) {
+                        cout << "❌ Invalid item selection.\n";
+                        continue;
+                    }
+                    cout << "✅ Item used in battle.\n";
+                }
+                else {
+                    cout << "🚫 Invalid choice. Please enter 1, 2, or 3.\n";
+                    continue;
+                }
+
+                if (boss.isAlive()) {
+                    cout << "\nBoss's Turn:\n";
+                    boss.decideAndAct(player);
+                }
+            }
+
+            if (!player.isAlive()) {
+                cout << "\nYou were defeated by the Undead King...\n";
+                playing = false;
+            } else {
+                cout << "\n🏆 You defeated the Undead King and cleared the dungeon!\n";
+                player.addGold(200);
+                player.addXP(300);
             }
         }
 

@@ -23,7 +23,7 @@ public:
     Enemy(string type, int level, int hp, int atk, int def);
     void attack(Character& target) override;
     void displayStats() const override;
-    void useSpecial(Character& target);
+    virtual void useSpecial(Character& target);
     void decideAndAct(Character& target);
 
     static Enemy generateRandomEnemy(int difficulty);
