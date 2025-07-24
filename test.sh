@@ -2,85 +2,94 @@
 
 # 🔧 Compile
 echo "🔧 Compiling..."
-g++ -DTEST_MODE -std=c++17 -I./include -o codebound ./main.cpp ./Character.cpp ./Player.cpp ./Enemy.cpp ./Leaderboard.cpp
-# ✅ Make sure previous output is cleared
+/opt/homebrew/opt/llvm/bin/clang++ \
+  -std=gnu++17 -stdlib=libc++ \
+  -Iinclude \
+  main.cpp Character.cpp Player.cpp Enemy.cpp Leaderboard.cpp \
+  -o codebound \
+  -L/opt/homebrew/opt/llvm/lib
+
+# ✅ Clean old output
 rm -f test_output.txt
 
-# 🎮 Simulated first run (new game, short fight, use item, save)
+# 🎮 Run simulation 1
 echo "🎮 Running game simulation..."
 ./codebound > test_output.txt << EOF
 1
 TestPlayerBot
-3
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
 1
 1
 1
 n
 EOF
 
-# 🔁 Test loading saved game (should skip battle)
+# 🔁 Load and test save
 echo "🔁 Loading saved game..."
 ./codebound >> test_output.txt << EOF
 2
-3
-Potion
+1
+1
+1
+1
+1
+1
 1
 1
 1
 n
 EOF
 
-# 💾 Test alternate save slot (multi-save support)
+# 💾 Test alternate slot
 echo "💾 Testing alternate save slot..."
 ./codebound >> test_output.txt << EOF
 1
 SlotTwoPlayer
-3
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
 1
 1
 1
 n
-3
 EOF
 
-# ✅ Trim output to last 100 lines only if the file exists
-if [ -f test_output.txt ]; then
-    tail -n 100 test_output.txt > test_output_trimmed.txt
-    mv test_output_trimmed.txt test_output.txt
+# ✅ Trim output
+if [[ -f test_output.txt ]]; then
+  tail -n 100 test_output.txt > test_output_trimmed.txt
+  mv test_output_trimmed.txt test_output.txt
 else
-    echo "⚠️ test_output.txt not found — skipping trim."
+  echo "⚠️ No test_output.txt — skipping trim."
 fi
 
-# 🧪 Check test output
+# 🧪 Assertions
 echo "🧪 Checking test results..."
-if grep -q "gained" test_output.txt; then
-    echo "✅ XP Gained: PASS"
-else
-    echo "❌ XP Gained: FAIL"
-fi
+grep -q "gained" test_output.txt && echo "✅ XP Gained: PASS" || echo "❌ XP Gained: FAIL"
+grep -q "Game saved successfully" test_output.txt && echo "✅ Save File Created: PASS" || echo "❌ Save File Created: FAIL"
+grep -q "Game loaded successfully" test_output.txt && echo "✅ Save File Loaded: PASS" || echo "❌ Save File Loaded: FAIL"
+grep -q "used a Potion" test_output.txt && echo "✅ Item Used in Battle: PASS" || echo "❌ Item Used in Battle: FAIL"
+grep -q "SlotTwoPlayer" test_output.txt && echo "✅ Alternate Save Slot: PASS" || echo "❌ Alternate Save Slot: FAIL"
 
-if grep -q "Game saved successfully" test_output.txt; then
-    echo "✅ Save File Created: PASS"
-else
-    echo "❌ Save File Created: FAIL"
-fi
-
-if grep -q "Game loaded successfully" test_output.txt; then
-    echo "✅ Save File Loaded: PASS"
-else
-    echo "❌ Save File Loaded: FAIL"
-fi
-
-if grep -q "used a Potion" test_output.txt; then
-    echo "✅ Item Used in Battle: PASS"
-else
-    echo "❌ Item Used in Battle: FAIL"
-fi
-
-if grep -q "SlotTwoPlayer" test_output.txt; then
-    echo "✅ Alternate Save Slot: PASS"
-else
-    echo "❌ Alternate Save Slot: FAIL"
-fi
-
-echo "📄 Output saved to test_output.txt (size: $(du -h test_output.txt | cut -f1))"
+echo "📄 Output saved (size: $(du -h test_output.txt | cut -f1))"

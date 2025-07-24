@@ -10,10 +10,56 @@ namespace fs = std::filesystem;
 
 using namespace std;
 
-int main() {
+bool useItemByIndex(Player& player, int index);
+
+int main(int argc, char* argv[]) {
     srand(time(0)); // Seed RNG
 
     Player player("Unnamed");
+
+    bool testMode = (argc > 1 && std::string(argv[1]) == "test");
+
+    if (testMode) {
+        if (!player.loadFromFile("save_TestPlayerBot.txt")) {
+            cout << "❌ Failed to load test save file.\n";
+            return 1;
+        }
+
+        Enemy enemy = Enemy::generateRandomEnemy(player.getLevel());
+
+        cout << "\n--- Enemy Appears! ---\n";
+        enemy.displayStats();
+        cout << "\n=== BATTLE START ===\n";
+        player.useItem("Potion");
+
+        for (int turn = 1; turn <= 2 && player.isAlive() && enemy.isAlive(); ++turn) {
+            cout << "\nYour Turn:\n";
+            player.attack(enemy);
+
+            if (enemy.isAlive()) {
+                cout << "\nEnemy's Turn:\n";
+                enemy.attack(player);
+            }
+        }
+
+        if (player.isAlive()) {
+            cout << "\nYou defeated the " << enemy.getName() << "!\n";
+            int earnedXP = enemy.getLevel() * 50;
+            player.addXP(earnedXP);
+            player.saveToFile("save_" + player.getName() + ".txt");
+            Leaderboard lb;
+            lb.loadFromFile("leaderboard.json");
+            lb.addOrUpdateEntry(player.getName(), player.getLevel(), player.getXP());
+            lb.sortLeaderboard();
+            lb.saveToFile("leaderboard.json");
+        } else {
+            cout << "\nYou were defeated by the " << enemy.getName() << "...\n";
+        }
+
+        cout << "\n=== GAME OVER ===\n";
+        cout << "Thanks for playing Codebound!\n";
+        return 0;
+    }
 
     cout << "Welcome to Codebound!\n";
     cout << "1. New Game\n2. Load Game\n3. View Leaderboard\nChoose: ";
@@ -76,47 +122,6 @@ int main() {
         player.getInventory().push_back("Elixir");
     }
 
-    #ifdef TEST_MODE
-        if (!player.loadFromFile("save_TestPlayerBot.txt")) {
-            cout << "❌ Failed to load test save file.\n";
-            return 1;
-        }
-
-        Enemy enemy = Enemy::generateRandomEnemy(player.getLevel());
-
-        cout << "\n--- Enemy Appears! ---\n";
-        enemy.displayStats();
-        cout << "\n=== BATTLE START ===\n";
-        player.useItem("Potion");
-
-        for (int turn = 1; turn <= 2 && player.isAlive() && enemy.isAlive(); ++turn) {
-            cout << "\nYour Turn:\n";
-            player.attack(enemy);
-
-            if (enemy.isAlive()) {
-                cout << "\nEnemy's Turn:\n";
-                enemy.attack(player);
-            }
-        }
-
-        if (player.isAlive()) {
-            cout << "\nYou defeated the " << enemy.getName() << "!\n";
-            int earnedXP = enemy.getLevel() * 50;
-            player.addXP(earnedXP);
-            player.saveToFile("save_" + player.getName() + ".txt");
-            Leaderboard lb;
-            lb.loadFromFile("leaderboard.json");
-            lb.addOrUpdateEntry(player.getName(), player.getLevel(), player.getXP());
-            lb.sortLeaderboard();
-            lb.saveToFile("leaderboard.json");
-        } else {
-            cout << "\nYou were defeated by the " << enemy.getName() << "...\n";
-        }
-
-        cout << "\n=== GAME OVER ===\n";
-        cout << "Thanks for playing Codebound!\n";
-        return 0;
-    #endif
 
     bool playing = true;
     while (playing) {
@@ -143,10 +148,12 @@ int main() {
 
                 if (choice == 1) {
                     player.attack(enemy);
-                } else if (choice == 2) {
-                    player.displayStats();
+                }
+                else if (choice == 2) {
+                    player.displayStats();  
                     continue;
-                } else if (choice == 3) {
+                }
+                else if (choice == 3) {
                     player.displayInventoryWithIndex();
                     cout << "Choose item number (or 0 to cancel): ";
                     int index;
@@ -156,14 +163,17 @@ int main() {
                     if (index == 0) {
                         cout << "Cancelled item use.\n";
                         continue;
-                    } else if (index > 0 && static_cast<size_t>(index) <= player.getInventory().size()) {
-                        player.useItemByIndex(index - 1);
-                    } else {
-                        cout << "Invalid item number.\n";
                     }
-                    continue;
-                } else {
-                    cout << "Invalid choice.\n";
+                    bool success = false;
+                    player.useItemByIndex(index - 1, success);
+                    if (!success) {
+                        cout << "❌ Invalid item selection.\n";
+                        continue;
+                    }
+                    cout << "✅ Item used in battle.\n";
+                }
+                else {
+                    cout << "🚫 Invalid choice. Please enter 1, 2, or 3.\n";
                     continue;
                 }
 

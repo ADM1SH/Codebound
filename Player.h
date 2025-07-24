@@ -38,7 +38,7 @@ public:
     void displayInventoryWithIndex() const;
 
     // Uses item by choosing its index in inventory
-    void useItemByIndex(int index);
+    void useItemByIndex(int index, bool& success);
 };
 
 #endif

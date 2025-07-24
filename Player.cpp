@@ -153,12 +153,14 @@ void Player::displayInventoryWithIndex() const {
     }
 }
 
-void Player::useItemByIndex(int index) {
+void Player::useItemByIndex(int index, bool& success) {
+    success = false;
     if (index < 1 || index > static_cast<int>(inventory.size())) {
         cout << "❌ Invalid item selection.\n";
         return;
     }
     useItem(inventory[index - 1]);
+    success = true;
 }
 
 void Player::addGold(int amount) {
