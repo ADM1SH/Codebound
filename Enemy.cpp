@@ -48,9 +48,42 @@ void Enemy::decideAndAct(Character& target) {
     }
 }
 void Enemy::useSpecial(Character& target) {
-    int specialDmg = atk + 15 + rand() % 10; // Stronger attack
-    cout << type << " uses a special attack for " << specialDmg << " damage!\n";
-    target.takeDamage(specialDmg);
+    if (type == "Goblin") {
+        // Goblin special: Strong hit + stun (sets a "stunned" flag externally if implemented)
+        int specialDmg = atk + 20 + rand() % 10;
+        cout << type << " uses a furious strike for " << specialDmg << " damage and stuns you!\n";
+        target.takeDamage(specialDmg);
+        // Optional: set a stunned flag on target here
+    }
+    else if (type == "Slime") {
+        // Slime special: Slows target (reduce ATK temporarily if supported)
+        int specialDmg = atk + 10 + rand() % 5;
+        cout << type << " spits slime for " << specialDmg << " damage! Your attack power is reduced!\n";
+        target.takeDamage(specialDmg);
+        // Optional: reduce target.atk here temporarily
+    }
+    else if (type == "Skeleton") {
+        // Skeleton special: Armor pierce (ignore DEF)
+        int specialDmg = atk + 15 + rand() % 8;
+        cout << type << " performs a bone-shattering attack ignoring your defense!\n";
+        // Apply damage directly, ignoring defense (if defense is considered elsewhere)
+        target.takeDamage(specialDmg); // You could bypass DEF manually if needed
+    }
+    else if (type == "Wolf") {
+        // Wolf special: Two quick hits
+        int hit1 = atk + rand() % 5;
+        int hit2 = atk + rand() % 5;
+        cout << type << " unleashes a flurry of attacks for " << hit1 << " and " << hit2 << " damage!\n";
+        target.takeDamage(hit1);
+        target.takeDamage(hit2);
+    }
+    else {
+        // Fallback default special
+        int specialDmg = atk + 15 + rand() % 10;
+        cout << type << " uses a special attack for " << specialDmg << " damage!\n";
+        target.takeDamage(specialDmg);
+    }
+
     usedSpecial = true;
 }
 

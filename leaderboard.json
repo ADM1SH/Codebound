@@ -1,13 +1,13 @@
 [
     {
         "level": 20,
-        "name": "TestPlayerBot",
-        "xp": 0
+        "name": "SlotTwoPlayer",
+        "xp": 1350
     },
     {
-        "level": 19,
-        "name": "SlotTwoPlayer",
-        "xp": 300
+        "level": 20,
+        "name": "TestPlayerBot",
+        "xp": 0
     },
     {
         "level": 11,
