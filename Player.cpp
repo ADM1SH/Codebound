@@ -15,8 +15,8 @@ Player::Player(string name)
 
 void Player::attack(Character& target) {
     if (isStunned()) {
-        cout << name << " is stunned and cannot move this turn!\n";
-        stunned = false;
+        cout << name << " is stunned and skips their turn!\n";
+        setStunned(false);
         return;
     }
     int dmg = rand() % 10 + atk;
@@ -55,6 +55,13 @@ void Player::addXP(int amount) {
     if (xp >= level * 100) {
         xp -= level * 100;
         levelUp();
+    }
+}
+
+void Player::startTurnCheckStun() {
+    if (isStunned()) {
+        cout << name << " is stunned and skips their turn!\n";
+        setStunned(false);
     }
 }
 

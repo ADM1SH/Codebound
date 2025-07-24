@@ -21,6 +21,7 @@ private:
 public:
 // Player.h
     bool isStunned() const;
+    void startTurnCheckStun();
     void resetTempAtk();
     void setStunned(bool value);
     void modifyTempAtk(int amount);
