@@ -1,65 +1,80 @@
-// Enemy.cpp
 #include "Enemy.h"
+#include "Character.h"
 #include <iostream>
-#include <cstdlib>
 
 using namespace std;
 
 Enemy::Enemy(string type, int level, int hp, int atk, int def)
-    : Character(type, level, hp, atk, def), type(type), usedSpecial(false) {}
-
-void Enemy::useSpecial(Character& target) {
-    if (!usedSpecial) {
-        int dmg = atk * 2;
-        cout << type << " uses a special attack for " << dmg << " damage!\n";
-        target.takeDamage(dmg);
-        usedSpecial = true;
-    } else {
-        attack(target); // fallback to normal attack
-    }
-}
-
-void Enemy::attack(Character& target) {
-    decideAndAct(target);
-}
-
-void Enemy::displayStats() const {
-    cout << type << " (Enemy) - Level " << level << "\n";
-    cout << "HP: " << hp << "/" << maxHp
-         << " | ATK: " << atk << " | DEF: " << def
-         << " | Special: " << (usedSpecial ? "Used" : "Ready") << "\n";
-}
+    : Character(type, level, hp, atk, def) {}
 
 void Enemy::decideAndAct(Character& target) {
-    // 20% chance to dodge player's attack (should be used in incoming logic elsewhere)
+    // Decide action: Special, Heal, or Attack
 
-    // Decide to use special attack if not yet used and 33% chance
+    bool acted = false;
+
+    cout << "[DEBUG] Enemy HP: " << hp << "/" << maxHp << ", Special Used: " << usedSpecial << endl;
+
+    // TODO: Add special attack variants (e.g., stun, slow) based on enemy type
+
+    // Use special attack with 33% chance if not yet used
     if (!usedSpecial && rand() % 3 == 0) {
+        cout << type << " is attempting a special attack!\n";
         useSpecial(target);
-    } else {
+        acted = true;
+    }
+
+    // Only heal if HP < 40% and special already used, with a 50% chance
+    // Try healing if HP is below 40% and special is used
+    if (!acted && usedSpecial && hp < (maxHp * 0.4) && rand() % 100 < 50) {
+        int heal = 15 + rand() % 16; // Heal 15–30 HP
+        int oldHp = hp;
+        hp += heal;
+        if (hp > maxHp) hp = maxHp;
+        usedSpecial = true;
+        cout << type << " healed for " << (hp - oldHp) << " HP!\n";
+        acted = true;
+    }
+
+    // Default attack
+    if (!acted) {
+        int dodgeChance = rand() % 100;
+        if (dodgeChance < 20) {
+            cout << type << " dodged the attack!\n";
+            return;
+        }
         int dmg = rand() % 8 + atk;
         cout << type << " attacks you for " << dmg << " damage!\n";
         target.takeDamage(dmg);
     }
-
-    // 15% chance to heal after attacking
-    if (hp < maxHp && rand() % 100 < 15) {
-        int heal = 10 + rand() % 11; // Heal 10–20 HP
-        hp += heal;
-        if (hp > maxHp) hp = maxHp;
-        cout << type << " heals for " << heal << " HP!\n";
-    }
+}
+void Enemy::useSpecial(Character& target) {
+    int specialDmg = atk + 15 + rand() % 10; // Stronger attack
+    cout << type << " uses a special attack for " << specialDmg << " damage!\n";
+    target.takeDamage(specialDmg);
+    usedSpecial = true;
 }
 
-// Example enemy generator
-Enemy Enemy::generateRandomEnemy(int difficulty) {
-    string types[] = { "Goblin", "Slime", "Skeleton", "Wolf" };
-    string type = types[rand() % 4];
+Enemy Enemy::generateRandomEnemy(int level) {
+    string types[] = {"Goblin", "Skeleton", "Wolf", "Slime"};
+    string chosenType = types[rand() % 4];
 
-    int level = difficulty;
-    int hp = 30 + rand() % 20 + level * 5;
-    int atk = 5 + rand() % 5 + level;
-    int def = 2 + rand() % 3;
+    int baseHp = 30 + level * 5 + rand() % 10;
+    int baseAtk = 5 + level * 2 + rand() % 4;
+    int baseDef = 2 + level + rand() % 3;
 
-    return Enemy(type, level, hp, atk, def);
+    Enemy newEnemy(chosenType, level, baseHp, baseAtk, baseDef);
+    newEnemy.type = chosenType;
+    return newEnemy;
+}
+
+void Enemy::attack(Character& target) {
+    int dmg = atk + (rand() % 6);
+    cout << type << " attacks you for " << dmg << " damage!\n";
+    target.takeDamage(dmg);
+}
+
+void Enemy::displayStats() const {
+    cout << type << " (Enemy) - Level " << level << endl;
+    cout << "HP: " << hp << "/" << maxHp << " | ATK: " << atk << " | DEF: " << def;
+    cout << " | Special: " << (usedSpecial ? "Used" : "Ready") << "\n";
 }
