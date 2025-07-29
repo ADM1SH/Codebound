@@ -21,3 +21,7 @@ void Character::displayStats() const {
     cout << name << " - Level " << level << "\n";
     cout << "HP: " << hp << "/" << maxHp << " | ATK: " << atk << " | DEF: " << def << "\n";
 }
+
+void Character::useSpecial(Character& target) {
+    // Default implementation: do nothing
+}

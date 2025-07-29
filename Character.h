@@ -17,6 +17,7 @@ public:
     string getName() const { return name; }
     Character(string name, int level, int hp, int atk, int def);
     virtual void attack(Character& target) = 0;
+    virtual void useSpecial(Character& target);
     void takeDamage(int dmg);
     bool isAlive() const;
     virtual void displayStats() const;

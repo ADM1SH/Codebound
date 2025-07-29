@@ -287,6 +287,7 @@ int main(int argc, char* argv[]) {
 
                 if (boss.isAlive()) {
                     cout << "\nBoss's Turn:\n";
+                    boss.checkPhaseTwo();
                     boss.decideAndAct(player);
                 }
             }
